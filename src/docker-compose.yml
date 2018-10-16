@@ -1,0 +1,34 @@
+version: '3.4'
+
+services:
+  basket.api:
+    image: ${DOCKER_REGISTRY}basketapi
+    build:
+      context: .
+      dockerfile: Basket.Api/Dockerfile
+    ports:
+      - "9010:80"
+    networks:
+      - ecommerce-network
+
+  order.api:
+    image: ${DOCKER_REGISTRY}orderapi
+    build:
+      context: .
+      dockerfile: Order.Api/Dockerfile
+    ports:
+      - "9020:80"
+    networks:
+      - ecommerce-network
+
+  rabbitmq:
+    image: rabbitmq:3.7.8-management-alpine
+    ports: 
+      - "15672:15672"
+    networks:
+      - ecommerce-network
+
+networks:
+  ecommerce-network:
+    driver: bridge
+
