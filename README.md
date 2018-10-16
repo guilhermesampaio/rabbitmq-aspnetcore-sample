@@ -1,0 +1,1 @@
+# rabbitmq-aspnetcore-sample
