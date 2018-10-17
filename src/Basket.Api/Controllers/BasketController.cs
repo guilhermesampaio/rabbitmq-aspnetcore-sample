@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
+using RabbitMQ.Client;
 
 namespace Basket.Api.Controllers
 {
@@ -49,6 +52,46 @@ namespace Basket.Api.Controllers
             cache.Set("basketCache", baskets, cacheOptions);
 
             return Ok(basket);
+        }
+
+        [HttpPost("{id}/checkout")]
+        public IActionResult Checkout(Guid id)
+        {
+            var baskets = cache.Get<IList<Basket>>(basketCache);
+            if (baskets is null)
+                return NotFound();
+
+            var basket = baskets.ToList().Where(it => it.Id == id).FirstOrDefault();
+
+            if (basket is null)
+                return NotFound();
+
+            var factory = new ConnectionFactory
+            {
+                HostName = "rabbitmq",
+                UserName = "guest",
+                Password = "guest"
+            };
+
+            using (var connection = factory.CreateConnection())
+            using (var channel = connection.CreateModel())
+            {
+                channel.QueueDeclare(
+                    queue: "hello",
+                    durable: false,
+                    exclusive: false,
+                    autoDelete: false,
+                    arguments: null);
+
+                var message = "hello, world!";
+                var body = Encoding.UTF8.GetBytes(message);
+
+                channel.BasicPublish(exchange: "", routingKey: "hello", basicProperties: null, body: body);
+
+                Debug.WriteLine("Mensagem enviada");
+            }
+
+            return Ok();
         }
 
 
