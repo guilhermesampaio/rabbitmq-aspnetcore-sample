@@ -57,6 +57,8 @@ namespace Order.Api
                              autoDelete: false,
                              arguments: null);
 
+            
+
             var consumer = new EventingBasicConsumer(channel);
 
             consumer.Received += (model, ea) =>
