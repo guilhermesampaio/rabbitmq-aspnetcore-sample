@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace BuildingBlock.EventBus
 {
@@ -9,21 +8,8 @@ namespace BuildingBlock.EventBus
     {
         void Publish(IntegrationEvent @event);
 
-        void Subscribe<T, TH>()
+        void Subscribe<T, TH>(string exchange, string queue)
             where T : IntegrationEvent
             where TH : IIntegrationEventHandler<T>;
     }
-
-    public class IntegrationEvent
-    {
-
-    }
-
-    public interface IIntegrationEventHandler<in TIntegrationEvent> : IIntegrationEventHandler
-        where TIntegrationEvent : IntegrationEvent
-    {
-        Task Handle(IntegrationEvent @event);
-    }
-
-    public interface IIntegrationEventHandler { }
 }

@@ -66,6 +66,7 @@ namespace Order.Api
                 var body = ea.Body;
                 var message = Encoding.UTF8.GetString(body);
                 Debug.WriteLine($"-----Mensagem recebida: {message}-----");
+
             };
 
             channel.BasicConsume(queue: "hello",
